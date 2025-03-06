@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Board } from "@/components/game/board";
 import { Keyboard } from "@/components/game/keyboard";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { 
   createInitialState,
@@ -57,14 +56,14 @@ export default function Home() {
 
         if (result.correct) {
           toast({
-            title: "Congratulations! 🎉",
+            title: "Congratulations!",
             description: "You won! Try another word?",
             variant: "default"
           });
         } else if (!result.correct && gameState.guesses.length === 5) {
           toast({
             title: "Game Over",
-            description: "Better luck next time! Try a new word.",
+            description: "Better luck next time!",
             variant: "destructive"
           });
         }
@@ -90,15 +89,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-background">
-      <header className="w-full p-4 flex items-center justify-between border-b bg-card">
-        <h1 className="text-2xl font-bold text-center flex-1 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-          Wordle Clone
-        </h1>
+      <header className="w-full p-4 flex items-center justify-between border-b">
+        <h1 className="text-2xl font-bold text-center flex-1">Wordle Clone</h1>
         <Button
           variant="ghost"
           size="icon"
           onClick={handleNewGame}
-          className="ml-auto hover:bg-primary/10"
+          className="ml-auto"
         >
           <RefreshCw className="h-4 w-4" />
         </Button>
