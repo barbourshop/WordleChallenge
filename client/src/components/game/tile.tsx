@@ -10,11 +10,11 @@ interface TileProps {
 }
 
 const statusStyles = {
-  correct: "bg-emerald-600 text-white border-emerald-600",
-  present: "bg-amber-500 text-white border-amber-500",
-  absent: "bg-slate-600 text-white border-slate-600",
-  empty: "bg-transparent border-gray-300",
-  tbd: "bg-transparent border-gray-400"
+  correct: "bg-[#6aaa64] text-white border-[#6aaa64]",
+  present: "bg-[#c9b458] text-white border-[#c9b458]",
+  absent: "bg-[#787c7e] text-white border-[#787c7e]",
+  empty: "bg-white border-[#d3d6da]",
+  tbd: "bg-white border-[#878a8c]"
 };
 
 export function Tile({ letter, status, delay = 0 }: TileProps) {

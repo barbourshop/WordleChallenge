@@ -14,21 +14,21 @@ interface KeyboardProps {
 }
 
 export function Keyboard({ onKey, feedback }: KeyboardProps) {
-  const getKeyVariant = (key: string) => {
+  const getKeyStyle = (key: string) => {
     const lowKey = key.toLowerCase();
-    let status: "default" | "destructive" | "secondary" | "primary" = "default";
+    let style = "bg-[#d3d6da] hover:bg-[#d3d6da]/80 text-black";
 
     for (const guess of feedback) {
       for (const { letter, status: letterStatus } of guess) {
         if (letter === lowKey) {
-          if (letterStatus === "correct") return "primary";
-          if (letterStatus === "present") return "warning";
-          if (letterStatus === "absent" && status === "default") return "secondary";
+          if (letterStatus === "correct") return "bg-[#6aaa64] hover:bg-[#6aaa64]/80 text-white";
+          if (letterStatus === "present") return "bg-[#c9b458] hover:bg-[#c9b458]/80 text-white";
+          if (letterStatus === "absent") style = "bg-[#787c7e] hover:bg-[#787c7e]/80 text-white";
         }
       }
     }
 
-    return status;
+    return style;
   };
 
   return (
@@ -38,12 +38,12 @@ export function Keyboard({ onKey, feedback }: KeyboardProps) {
           {row.map((key) => (
             <Button
               key={key}
-              variant={getKeyVariant(key)}
-              className={cn(
-                "h-14 text-lg font-semibold",
-                key.length > 1 ? "px-4" : "w-9"
-              )}
               onClick={() => onKey(key)}
+              className={cn(
+                "h-14 text-lg font-semibold transition-colors",
+                key.length > 1 ? "px-4" : "w-9",
+                getKeyStyle(key)
+              )}
             >
               {key}
             </Button>
