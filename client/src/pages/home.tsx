@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Board } from "@/components/game/board";
 import { Keyboard } from "@/components/game/keyboard";
 import { Button } from "@/components/ui/button";
@@ -7,47 +7,20 @@ import {
   createInitialState,
   checkGuess,
   isValidGuess,
-  getNewWord,
   WORD_LENGTH,
   type GameState
 } from "@/lib/game";
 import { RefreshCw } from "lucide-react";
 
-// Initial empty state
-const emptyState: GameState = {
-  guesses: [],
-  feedback: [],
-  currentGuess: "",
-  gameWon: false,
-  gameLost: false,
-  targetWord: undefined
-};
-
 export default function Home() {
-  const [gameState, setGameState] = useState<GameState>(emptyState);
+  const [gameState, setGameState] = useState<GameState>(createInitialState());
   const { toast } = useToast();
 
-  async function startNewGame() {
-    const targetWord = await getNewWord();
-    setGameState({
-      guesses: [],
-      feedback: [],
-      currentGuess: "",
-      gameWon: false,
-      gameLost: false,
-      targetWord
-    });
-  }
-
-  useEffect(() => {
-    startNewGame();
-  }, []);
-
   const handleNewGame = () => {
-    startNewGame();
+    setGameState(createInitialState());
   };
 
-  const handleKey = async (key: string) => {
+  const handleKey = (key: string) => {
     if (gameState.gameWon || gameState.gameLost || !gameState.targetWord) return;
 
     if (key === "Enter") {
@@ -69,35 +42,27 @@ export default function Home() {
         return;
       }
 
-      try {
-        const result = await checkGuess(gameState.currentGuess, gameState.targetWord);
+      const result = checkGuess(gameState.currentGuess, gameState.targetWord);
 
-        setGameState(prev => ({
-          ...prev,
-          guesses: [...prev.guesses, prev.currentGuess],
-          feedback: [...prev.feedback, result.feedback],
-          currentGuess: "",
-          gameWon: result.correct,
-          gameLost: !result.correct && prev.guesses.length === 5
-        }));
+      setGameState(prev => ({
+        ...prev,
+        guesses: [...prev.guesses, prev.currentGuess],
+        feedback: [...prev.feedback, result.feedback],
+        currentGuess: "",
+        gameWon: result.correct,
+        gameLost: !result.correct && prev.guesses.length === 5
+      }));
 
-        if (result.correct) {
-          toast({
-            title: "Congratulations!",
-            description: "You won! Try another word?",
-            variant: "default"
-          });
-        } else if (!result.correct && gameState.guesses.length === 5) {
-          toast({
-            title: "Game Over",
-            description: `The word was ${gameState.targetWord.toUpperCase()}. Try again!`,
-            variant: "destructive"
-          });
-        }
-      } catch (error) {
+      if (result.correct) {
         toast({
-          title: "Error",
-          description: "Failed to check word",
+          title: "Congratulations!",
+          description: "You won! Try another word?",
+          variant: "default"
+        });
+      } else if (!result.correct && gameState.guesses.length === 5) {
+        toast({
+          title: "Game Over",
+          description: `The word was ${gameState.targetWord.toUpperCase()}. Try again!`,
           variant: "destructive"
         });
       }

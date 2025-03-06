@@ -1,5 +1,5 @@
-import { type GuessResult } from "@shared/schema";
-import { apiRequest } from "./queryClient";
+import { getRandomWord, checkGuess as checkGuessLocal } from "./words";
+import type { GuessResult } from "@shared/schema";
 
 export type GameState = {
   guesses: string[];
@@ -7,29 +7,26 @@ export type GameState = {
   currentGuess: string;
   gameWon: boolean;
   gameLost: boolean;
-  targetWord?: string; // Add target word to state
+  targetWord?: string;
 };
 
 export const WORD_LENGTH = 5;
 export const MAX_GUESSES = 6;
 
-export async function getNewWord(): Promise<string> {
-  const res = await apiRequest("GET", "/api/word");
-  const data = await res.json();
-  return data.word;
+export function getNewWord(): string {
+  return getRandomWord();
 }
 
-export async function checkGuess(word: string, targetWord: string): Promise<GuessResult> {
-  const res = await apiRequest("POST", "/api/check", { word, targetWord });
-  return res.json();
+export function checkGuess(word: string, targetWord: string): GuessResult {
+  return checkGuessLocal(word, targetWord);
 }
 
 export function isValidGuess(guess: string): boolean {
   return guess.length === WORD_LENGTH && /^[a-zA-Z]+$/.test(guess);
 }
 
-export async function createInitialState(): Promise<GameState> { // Async to fetch the word
-  const targetWord = await getNewWord();
+export function createInitialState(): GameState {
+  const targetWord = getNewWord();
   return {
     guesses: [],
     feedback: [],
