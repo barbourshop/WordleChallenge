@@ -20,12 +20,20 @@ const statusStyles = {
 export function Tile({ letter, status, delay = 0 }: TileProps) {
   return (
     <motion.div
-      initial={{ rotateX: 0 }}
-      animate={{ rotateX: status !== "empty" ? [0, 90, 0] : 0 }}
-      transition={{ delay, duration: 0.5 }}
+      initial={{ rotateX: 0, scale: 1 }}
+      animate={{ 
+        rotateX: status !== "empty" ? [0, 90, 0] : 0,
+        scale: letter ? [1, 1.1, 1] : 1
+      }}
+      transition={{ 
+        duration: 0.5, 
+        delay: status !== "empty" ? delay : 0,
+        scale: { duration: 0.1 }
+      }}
       className={cn(
-        "w-14 h-14 border-2 flex items-center justify-center text-2xl font-bold rounded",
-        "sm:w-16 sm:h-16",
+        "w-12 h-12 border-2 flex items-center justify-center text-xl font-bold rounded",
+        "sm:w-14 sm:h-14 sm:text-2xl",
+        "transition-colors duration-300",
         statusStyles[status]
       )}
     >
