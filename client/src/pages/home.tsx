@@ -117,7 +117,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center bg-white">
       <header className="w-full p-4 flex items-center justify-between border-b">
-        <h1 className="text-2xl font-bold text-center flex-1">Wordle Clone</h1>
+        <h1 className="text-2xl font-bold text-center flex-1">WordUp</h1>
         <Button
           variant="ghost"
           size="icon"
