@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Board } from "@/components/game/board";
 import { Keyboard } from "@/components/game/keyboard";
 import { Button } from "@/components/ui/button";
@@ -7,21 +7,48 @@ import {
   createInitialState,
   checkGuess,
   isValidGuess,
+  getNewWord,
   WORD_LENGTH,
   type GameState
 } from "@/lib/game";
 import { RefreshCw } from "lucide-react";
 
+// Initial empty state
+const emptyState: GameState = {
+  guesses: [],
+  feedback: [],
+  currentGuess: "",
+  gameWon: false,
+  gameLost: false,
+  targetWord: undefined
+};
+
 export default function Home() {
-  const [gameState, setGameState] = useState<GameState>(createInitialState());
+  const [gameState, setGameState] = useState<GameState>(emptyState);
   const { toast } = useToast();
 
+  async function startNewGame() {
+    const targetWord = await getNewWord();
+    setGameState({
+      guesses: [],
+      feedback: [],
+      currentGuess: "",
+      gameWon: false,
+      gameLost: false,
+      targetWord
+    });
+  }
+
+  useEffect(() => {
+    startNewGame();
+  }, []);
+
   const handleNewGame = () => {
-    setGameState(createInitialState());
+    startNewGame();
   };
 
   const handleKey = async (key: string) => {
-    if (gameState.gameWon || gameState.gameLost) return;
+    if (gameState.gameWon || gameState.gameLost || !gameState.targetWord) return;
 
     if (key === "Enter") {
       if (gameState.currentGuess.length !== WORD_LENGTH) {
@@ -43,7 +70,7 @@ export default function Home() {
       }
 
       try {
-        const result = await checkGuess(gameState.currentGuess);
+        const result = await checkGuess(gameState.currentGuess, gameState.targetWord);
 
         setGameState(prev => ({
           ...prev,
@@ -63,7 +90,7 @@ export default function Home() {
         } else if (!result.correct && gameState.guesses.length === 5) {
           toast({
             title: "Game Over",
-            description: "Better luck next time!",
+            description: `The word was ${gameState.targetWord.toUpperCase()}. Try again!`,
             variant: "destructive"
           });
         }

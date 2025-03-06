@@ -12,23 +12,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Check a guess
   app.post("/api/check", (req, res) => {
-    const result = wordSchema.safeParse(req.body);
+    const { word, targetWord } = req.body;
+    const result = wordSchema.safeParse({ word });
     if (!result.success) {
       return res.status(400).json({ message: "Invalid word format" });
     }
 
     const guess = result.data.word.toLowerCase();
-    const target = getRandomWord().toLowerCase();
-    
-    const feedback = guess.split("").map((letter, i) => {
-      if (letter === target[i]) {
-        return { letter, status: "correct" as const };
+    const target = targetWord.toLowerCase();
+
+    // First pass: mark correct letters
+    const feedback = Array(5).fill(null).map((_, i) => {
+      if (guess[i] === target[i]) {
+        return { letter: guess[i], status: "correct" as const };
       }
-      if (target.includes(letter)) {
-        return { letter, status: "present" as const };
-      }
-      return { letter, status: "absent" as const };
+      return null;
     });
+
+    // Second pass: mark present/absent letters
+    const targetLetters = target.split('');
+    for (let i = 0; i < guess.length; i++) {
+      if (feedback[i] !== null) continue; // Skip correct letters
+
+      const letter = guess[i];
+      const letterIndex = targetLetters.indexOf(letter);
+
+      if (letterIndex !== -1 && guess[letterIndex] !== target[letterIndex]) {
+        // Letter exists in target and isn't already used for a correct match
+        feedback[i] = { letter, status: "present" as const };
+        targetLetters[letterIndex] = null as any; // Mark as used
+      } else {
+        feedback[i] = { letter, status: "absent" as const };
+      }
+    }
 
     const isCorrect = feedback.every(f => f.status === "correct");
     res.json({ correct: isCorrect, feedback });
