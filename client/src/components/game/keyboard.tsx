@@ -14,16 +14,16 @@ interface KeyboardProps {
 }
 
 export function Keyboard({ onKey, feedback }: KeyboardProps) {
-  const getKeyStatus = (key: string) => {
+  const getKeyVariant = (key: string) => {
     const lowKey = key.toLowerCase();
-    let status: "default" | "secondary" | "warning" | "success" = "default";
+    let status: "default" | "destructive" | "secondary" | "primary" = "default";
 
     for (const guess of feedback) {
       for (const { letter, status: letterStatus } of guess) {
         if (letter === lowKey) {
-          if (letterStatus === "correct") return "success";
-          if (letterStatus === "present") status = "warning";
-          if (letterStatus === "absent" && status === "default") status = "secondary";
+          if (letterStatus === "correct") return "primary";
+          if (letterStatus === "present") return "warning";
+          if (letterStatus === "absent" && status === "default") return "secondary";
         }
       }
     }
@@ -38,7 +38,7 @@ export function Keyboard({ onKey, feedback }: KeyboardProps) {
           {row.map((key) => (
             <Button
               key={key}
-              variant={getKeyStatus(key)}
+              variant={getKeyVariant(key)}
               className={cn(
                 "h-14 text-lg font-semibold",
                 key.length > 1 ? "px-4" : "w-9"

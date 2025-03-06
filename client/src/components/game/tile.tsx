@@ -10,10 +10,10 @@ interface TileProps {
 }
 
 const statusStyles = {
-  correct: "bg-green-500 text-white border-green-500",
-  present: "bg-yellow-500 text-white border-yellow-500",
-  absent: "bg-gray-500 text-white border-gray-500",
-  empty: "bg-transparent border-gray-200",
+  correct: "bg-emerald-600 text-white border-emerald-600",
+  present: "bg-amber-500 text-white border-amber-500",
+  absent: "bg-slate-600 text-white border-slate-600",
+  empty: "bg-transparent border-gray-300",
   tbd: "bg-transparent border-gray-400"
 };
 
